@@ -18,6 +18,10 @@ let offset = 0;
 socket.emit("get-time", serverTime => {
     offset = serverTime - Date.now();
 });
+function testClick() {
+    alert("Button click works");
+}
+
 
 function getServerTime() {
     return Date.now() + offset;
