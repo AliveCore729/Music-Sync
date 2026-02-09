@@ -5,12 +5,24 @@
 </head>
 <body>
     <h1>Music Sync App</h1>
-    <button onclick="createRoom()">Create Room</button>
+
+    <button onclick="createRoom()">Create Room (Host)</button>
+
+    <p id="link"></p>
 
     <script>
         function createRoom() {
             const room = Math.random().toString(36).substring(2, 8);
-            window.location.href = `/host.html?room=${room}`;
+
+            // Show shareable link for guests
+            const link = `${window.location.origin}/client.html?room=${room}`;
+            document.getElementById("link").innerHTML =
+                `Share this link:<br><a href="${link}" target="_blank">${link}</a>`;
+
+            // Redirect ONLY host
+            setTimeout(() => {
+                window.location.href = `/host.html?room=${room}`;
+            }, 1000);
         }
     </script>
 </body>

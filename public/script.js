@@ -2,6 +2,12 @@ const socket = io();
 const audio = document.getElementById("audio");
 const room = new URLSearchParams(window.location.search).get("room");
 
+if (!room) {
+    alert("Invalid or missing room link. Please use the link given by the host.");
+    throw new Error("Room ID missing");
+}
+
+
 socket.emit("join-room", room);
 
 let offset = 0;

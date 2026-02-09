@@ -4,13 +4,14 @@
     <title>Listener</title>
 </head>
 <body>
-    <h2>Tap to Join</h2>
+    <h2>Guest Device</h2>
+    <p>Tap the button to join the session</p>
+
+    <button onclick="unlock()">Join Session</button>
 
     <audio id="audio">
         <source src="song.mp3" type="audio/mp3">
     </audio>
-
-    <button onclick="unlock()">Join Session</button>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
