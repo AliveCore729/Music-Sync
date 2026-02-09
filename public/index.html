@@ -6,23 +6,28 @@
 <body>
     <h1>Music Sync App</h1>
 
-    <button onclick="createRoom()">Create Room (Host)</button>
+    <button id="create">Create Room (Host)</button>
 
-    <p id="link"></p>
+    <p id="output"></p>
 
     <script>
-        function createRoom() {
+        const btn = document.getElementById("create");
+        const output = document.getElementById("output");
+
+        btn.onclick = () => {
             const room = Math.random().toString(36).substring(2, 8);
 
-            // Show shareable link for guests
-            const link = `${window.location.origin}/client.html?room=${room}`;
-            document.getElementById("link").innerHTML =
-                `Share this link:<br><a href="${link}" target="_blank">${link}</a>`;
+            const guestLink = `${window.location.origin}/client.html?room=${room}`;
 
-            // Redirect ONLY host
-            setTimeout(() => {
-                window.location.href = `/host.html?room=${room}`;
-            }, 1000);
+            output.innerHTML = `
+                <b>Share this link with guests:</b><br>
+                <a href="${guestLink}" target="_blank">${guestLink}</a><br><br>
+                <button onclick="goHost('${room}')">Go to Host Controls</button>
+            `;
+        };
+
+        function goHost(room) {
+            window.location.href = `/host.html?room=${room}`;
         }
     </script>
 </body>

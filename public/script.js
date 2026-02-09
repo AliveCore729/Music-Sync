@@ -1,3 +1,5 @@
+console.log("PAGE LOADED:", window.location.pathname, "ROOM:", window.location.search);
+
 const socket = io();
 const audio = document.getElementById("audio");
 const room = new URLSearchParams(window.location.search).get("room");
@@ -7,11 +9,11 @@ if (!room) {
     throw new Error("Room ID missing");
 }
 
+let unlocked = false;
 
 socket.emit("join-room", room);
 
 let offset = 0;
-
 socket.emit("get-time", serverTime => {
     offset = serverTime - Date.now();
 });
@@ -48,10 +50,20 @@ socket.on("sync-event", data => {
 });
 
 function schedulePlay(time) {
+    if (!unlocked) return;
+
     const delay = time - getServerTime();
-    setTimeout(() => audio.play(), delay);
+    if (delay <= 0) {
+        audio.play();
+    } else {
+        setTimeout(() => audio.play(), delay);
+    }
 }
 
 function unlock() {
-    audio.play().then(() => audio.pause());
+    audio.play().then(() => {
+        audio.pause();
+        unlocked = true;
+        alert("Joined successfully. Waiting for host...");
+    });
 }
