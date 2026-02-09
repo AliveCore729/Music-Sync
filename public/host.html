@@ -4,18 +4,14 @@
     <title>Host</title>
 </head>
 <body>
-    <h2>Host Controls</h2>
+    <h2>Host (Laptop)</h2>
     <p>Share this guest link:</p>
     <a id="shareLink" href="#"></a>
-    <p id="status"></p>
 
-    <audio id="audio" controls>
-        <source src="song.mp3" type="audio/mp3">
-    </audio>
+    <p id="status">Ready.</p>
 
-    <br><br>
-    <button onclick="play()">Play</button>
-    <button onclick="pause()">Pause</button>
+    <button id="startStreamBtn">Start Streaming Laptop Audio</button>
+    <button id="stopStreamBtn" disabled>Stop Stream</button>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>

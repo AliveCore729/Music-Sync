@@ -17,7 +17,13 @@ io.on("connection", (socket) => {
         socket.data.role = role;
 
         if (!rooms.has(roomId)) {
-            rooms.set(roomId, { hostId: null, state: null });
+            rooms.set(roomId, {
+                hostId: null,
+                stream: {
+                    active: false,
+                    mimeType: null,
+                },
+            });
         }
 
         const room = rooms.get(roomId);
@@ -30,19 +36,12 @@ io.on("connection", (socket) => {
             roomId,
             role,
             hasHost: Boolean(room.hostId),
-            state: room.state,
+            stream: room.stream,
         });
     });
 
-    socket.on("request-room-state", ({ roomId }) => {
-        const room = rooms.get(roomId);
-        if (room?.state) {
-            socket.emit("room-state", room.state);
-        }
-    });
-
-    socket.on("host-state-update", ({ roomId, state }) => {
-        if (!roomId || !state) {
+    socket.on("host-start-stream", ({ roomId, mimeType }) => {
+        if (!roomId || !mimeType) {
             return;
         }
 
@@ -51,13 +50,47 @@ io.on("connection", (socket) => {
             return;
         }
 
-        room.state = {
-            isPlaying: Boolean(state.isPlaying),
-            position: Number(state.position) || 0,
-            at: Number(state.at) || Date.now(),
+        room.stream = {
+            active: true,
+            mimeType,
         };
 
-        socket.to(roomId).emit("room-state", room.state);
+        socket.to(roomId).emit("stream-start", room.stream);
+    });
+
+    socket.on("audio-chunk", ({ roomId, chunk }) => {
+        if (!roomId || !chunk) {
+            return;
+        }
+
+        const room = rooms.get(roomId);
+        if (!room || room.hostId !== socket.id) {
+            return;
+        }
+
+        if (!room.stream.active) {
+            return;
+        }
+
+        socket.to(roomId).emit("audio-chunk", chunk);
+    });
+
+    socket.on("host-stop-stream", ({ roomId }) => {
+        if (!roomId) {
+            return;
+        }
+
+        const room = rooms.get(roomId);
+        if (!room || room.hostId !== socket.id) {
+            return;
+        }
+
+        room.stream = {
+            active: false,
+            mimeType: null,
+        };
+
+        socket.to(roomId).emit("stream-stop");
     });
 
     socket.on("get-time", (callback) => {
@@ -72,6 +105,11 @@ io.on("connection", (socket) => {
 
         const room = rooms.get(roomId);
         if (room.hostId === socket.id) {
+            room.stream = {
+                active: false,
+                mimeType: null,
+            };
+            socket.to(roomId).emit("stream-stop");
             room.hostId = null;
         }
 

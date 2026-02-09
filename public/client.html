@@ -5,13 +5,11 @@
 </head>
 <body>
     <h2>Guest Device</h2>
-    <p id="status">Tap Join Session once to allow audio playback.</p>
+    <p id="status">Tap Join Session once, then wait for host stream.</p>
 
     <button id="joinBtn">Join Session</button>
 
-    <audio id="audio">
-        <source src="song.mp3" type="audio/mp3">
-    </audio>
+    <audio id="audio" controls autoplay></audio>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
