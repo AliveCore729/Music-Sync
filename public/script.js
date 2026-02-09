@@ -1,3 +1,4 @@
+alert("script.js loaded");
 console.log("PAGE LOADED:", window.location.pathname, "ROOM:", window.location.search);
 
 const socket = io();
